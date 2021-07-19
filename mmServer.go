@@ -18,6 +18,7 @@ type MatchmakingServer struct {
 	ConnectionsMap map[string]*websocket.Conn
 	Connections    map[*websocket.Conn]bool
 	Upgrader       websocket.Upgrader
+	ActivePlayers  *ActivePlayers
 }
 
 func (server MatchmakingServer) handlePlayerTickets(w http.ResponseWriter, r *http.Request) {
@@ -30,12 +31,21 @@ func (server MatchmakingServer) handlePlayerTickets(w http.ResponseWriter, r *ht
 			return
 		}
 		player := req.Json2Player()
-		server.addPlayerTicket(&player)
+		if !server.checkPlayerStutus(&player) {
+			server.ActivePlayers.Add(player.name)
+			server.addPlayerTicket(&player)
+		} else {
+			fmt.Println("Player already in queue")
+		}
 	}
 }
 
 func (server MatchmakingServer) addPlayerTicket(p *Player) {
 	server.TicketChan <- p
+}
+
+func (server MatchmakingServer) checkPlayerStutus(p *Player) bool {
+	return server.ActivePlayers.IsActive(p.name)
 }
 
 func (server MatchmakingServer) Start() {

@@ -18,9 +18,9 @@ func main() {
 	connections := map[*websocket.Conn]bool{}
 	upgrader := websocket.Upgrader{}
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+	ap := matchmaker.NewActivePlayers()
+	go matchmaker.MatchmakerJob(tickerChannel, &parties, partySize, ap)
 
-	go matchmaker.MatchmakerJob(tickerChannel, &parties, partySize)
-
-	httpServer := matchmaker.MatchmakingServer{tickerChannel, connectionsMap, connections, upgrader}
+	httpServer := matchmaker.MatchmakingServer{tickerChannel, connectionsMap, connections, upgrader, ap}
 	httpServer.Start()
 }

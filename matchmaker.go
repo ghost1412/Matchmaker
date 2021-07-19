@@ -6,9 +6,10 @@ import (
 	"time"
 )
 
-func MatchmakerJob(jobs chan *Player, parties *[]*Party, partySize int) {
+func MatchmakerJob(jobs chan *Player, parties *[]*Party, partySize int, ap *ActivePlayers) {
 	for player := range jobs {
 		if player.ttl > time.Now().Unix() {
+			ap.Remove(player.name)
 			removeParty(parties, player.party)
 			continue
 		}
