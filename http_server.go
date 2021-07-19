@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -13,6 +14,7 @@ type RequestTickets struct {
 	Name  string
 	Skill int
 	Ping  int
+	ttl   int64
 }
 
 type CreateWebsocketConnectionRequest struct {
@@ -27,7 +29,7 @@ type MatchmakingServer struct {
 }
 
 func (r RequestTickets) Json2Player() Player {
-	return NewPlayer(r.Name, r.Skill, r.Ping)
+	return NewPlayer(r.Name, r.Skill, r.Ping, time.Now().Unix()+r.ttl)
 }
 
 func (server MatchmakingServer) handlePlayerTickets(w http.ResponseWriter, r *http.Request) {

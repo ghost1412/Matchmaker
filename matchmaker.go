@@ -8,6 +8,10 @@ import (
 
 func MatchmakerJob(jobs chan *Player, parties *[]*Party, partySize int) {
 	for player := range jobs {
+		if player.ttl > time.Now().Unix() {
+			removeParty(parties, player.party)
+			continue
+		}
 		if player.foundParty || player.inProcess {
 			continue
 		}

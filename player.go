@@ -19,10 +19,11 @@ type Player struct {
 	inProcess  bool
 	lastPing   int
 	pingDelta  int
+	ttl        int64
 }
 
-func NewPlayer(name string, skill int, ping int) Player {
-	return Player{name: name, skill: skill, lastPing: ping, timestamp: time.Now().Unix(), foundParty: false, delta: 2, party: nil, inParty: false, inProcess: false}
+func NewPlayer(name string, skill int, ping int, ttl int64) Player {
+	return Player{name: name, skill: skill, lastPing: ping, ttl: ttl, timestamp: time.Now().Unix(), foundParty: false, delta: 2, party: nil, inParty: false, inProcess: false}
 }
 
 func (player *Player) lock() {
