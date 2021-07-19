@@ -17,10 +17,12 @@ type Player struct {
 	party      *Party
 	inParty    bool
 	inProcess  bool
+	lastPing   int
+	pingDelta  int
 }
 
-func NewPlayer(name string, skill int) Player {
-	return Player{name: name, skill: skill, timestamp: time.Now().Unix(), foundParty: false, delta: 2, party: nil, inParty: false, inProcess: false}
+func NewPlayer(name string, skill int, ping int) Player {
+	return Player{name: name, skill: skill, lastPing: ping, timestamp: time.Now().Unix(), foundParty: false, delta: 2, party: nil, inParty: false, inProcess: false}
 }
 
 func (player *Player) lock() {
@@ -73,6 +75,10 @@ func findOptimalParty(parties []*Party) *Party {
 		}
 	}
 	return bestParty
+}
+
+func inPing(player *Player, party *Party) bool {
+	return player.lastPing <= party.avgPing+player.pingDelta
 }
 
 func inSkillGroup(player *Player, party *Party) bool {

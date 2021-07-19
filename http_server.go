@@ -12,6 +12,7 @@ import (
 type RequestTickets struct {
 	Name  string
 	Skill int
+	Ping  int
 }
 
 type CreateWebsocketConnectionRequest struct {
@@ -26,7 +27,7 @@ type MatchmakingServer struct {
 }
 
 func (r RequestTickets) Json2Player() Player {
-	return NewPlayer(r.Name, r.Skill)
+	return NewPlayer(r.Name, r.Skill, r.Ping)
 }
 
 func (server MatchmakingServer) handlePlayerTickets(w http.ResponseWriter, r *http.Request) {
