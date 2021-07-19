@@ -10,6 +10,7 @@ type Party struct {
 	id        string
 	players   []*Player
 	avgSkill  int
+	avgPing   int
 	createdAt int64
 }
 
@@ -41,6 +42,7 @@ func (party *Party) addPlayer(player *Player) {
 	defer party.unlock()
 	party.players = append(party.players, player)
 	party.computeAvgPartySkill()
+	party.computeAvgPing()
 }
 
 func (party *Party) removePlayer(player *Player) {
@@ -70,6 +72,18 @@ func (party *Party) computeAvgPartySkill() {
 		sum += p.skill
 	}
 	party.avgSkill = sum / len(party.players)
+}
+
+func (party *Party) computeAvgPing() {
+	if party.isEmpty() {
+		party.avgPing = 0
+		return
+	}
+	sum := 0
+	for _, p := range party.players {
+		sum += p.lastPing
+	}
+	party.avgPing = sum / len(party.players)
 }
 
 func (party *Party) markAllFoundParty() {
